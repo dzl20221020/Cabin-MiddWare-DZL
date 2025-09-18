@@ -1,0 +1,52 @@
+# 应用过设置
+server:
+  port: 8888
+# MQTT配置
+mqtt:
+  hostUrl: tcp://127.0.0.1:1883
+  username: admin
+  password: admin
+  client-id: MQTT-CLIENT-SIGNAL-FLOW-1
+  cleanSession: true
+  reconnect: true
+  timeout: 100
+  keepAlive: 100
+  defaultTopic:
+  serverTopic:
+  isOpen: true
+  qos: 0
+
+#MindTooth配置
+mindtooth:
+  impedance_name: 101409-1002_Impedance
+  data_name: 101409-1002_EEG
+  impedance_id: 0
+  data_id: 1
+  sampeRate: 125
+  dataChannels: 8
+  impChannels: 10
+  impedance_or_data: 1
+
+# 日志配置
+logging:
+  config: classpath:logback.xml
+  level:
+    com.zhou.test: info
+    org.springframework: warn
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 500MB
+loader:
+  path: src/main/resources/lib/
+
+# music配置
+music:
+  music-folder: F:\\NeuroX-2.0\\enviroment\\music
+
+# gazepoint配置
+gazepoint:
+  host: 127.0.0.1
+  port: 4242
