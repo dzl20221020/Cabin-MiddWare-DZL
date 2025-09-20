@@ -1,6 +1,6 @@
 package com.hdu.neurostudent_signalflow.devicelister.mindtooth;
 
-import com.hdu.neurostudent_signalflow.adapter.MindToothDeviceAdatper;
+import com.hdu.neurostudent_signalflow.adapter.MindToothDeviceAdapter;
 import com.hdu.neurostudent_signalflow.devicelister.DeviceLister;
 import com.hdu.neurostudent_signalflow.utils.websocket.MindtoothWebSocketClient;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ public class MindToothDeviceLister extends DeviceLister {
     private static final Logger logger = LoggerFactory.getLogger(MindToothDeviceLister.class);
 
     @Resource
-    private MindToothDeviceAdatper mindToothDeviceAdatper;  //mindtooth适配器类
+    private MindToothDeviceAdapter mindToothDeviceAdatper;  //mindtooth适配器类
     @Resource
     private MindToothDataLister mindToothDataLister;    //mindtooth数据监听类
     @Resource

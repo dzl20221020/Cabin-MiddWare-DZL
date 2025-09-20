@@ -23,4 +23,7 @@ public class MindToothProperties {
     private String python_path;
     private String sdk_path;
     private int max_retry_count;
+
+    // 适配器相关配置
+    private int processThread;
 }

@@ -1,19 +1,15 @@
 package com.hdu.neurostudent_signalflow.devicelister.mindtooth;
 
-import com.hdu.neurostudent_signalflow.adapter.MindToothDeviceAdatper;
+import com.hdu.neurostudent_signalflow.adapter.MindToothDeviceAdapter;
 import com.hdu.neurostudent_signalflow.config.MindToothProperties;
 import com.hdu.neurostudent_signalflow.utils.mindtooth.LSL;
-import com.hdu.neurostudent_signalflow.utils.timestamp.TimestampSyncUtil;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.concurrent.BlockingDeque;
 
 /*
@@ -31,7 +27,7 @@ public class MindToothDataLister implements Runnable {
     BlockingDeque<double[]> recvData;   //数据接收队列
 
     @Setter
-    MindToothDeviceAdatper mindToothDeviceAdatper;
+    MindToothDeviceAdapter mindToothDeviceAdatper;
 
     // 数据和阻抗值监听程序用的是同一个数据接收队列
     public void setRecQueue(BlockingDeque<double[]> recQueue) {
@@ -79,8 +75,10 @@ public class MindToothDataLister implements Runnable {
                 double currTimestamp = System.currentTimeMillis();
                 data[size+1] = currTimestamp;
 
-                mindToothDeviceAdatper.processData(data);
+//                mindToothDeviceAdatper.processData(data);
+                recvData.add(data);
             }
+
         } catch(Exception ex) {
             logger.error("mindtooth数据监听程序异常...", ex);
         }

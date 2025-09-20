@@ -38,10 +38,8 @@ public class MindToothOperator {
 
     public void EEGData2UnifyData(double[] sig_data) {
         try {
-            //                        logger.info("[当前处理线程：]"+Thread.currentThread());
-
-//            logger.info("[当前处理线程：]"+ num++ + "   "+Thread.currentThread()+"处理的数据序号为："+ sig_data[sig_data.length-1]);
-
+            logger.info("[当前处理线程：]"+Thread.currentThread());
+            logger.info("[当前处理线程：]"+ num++ + "   "+Thread.currentThread()+"处理的数据序号为："+ sig_data[sig_data.length-1]);
 
             // 处理数据逻辑
             int size = sig_data.length;
@@ -55,7 +53,6 @@ public class MindToothOperator {
 
             mindTooth.data = dataList.subList(0, size - 2);
             String timestamp_temp = String.format("%.0f", sig_data[size - 1]);
-//                        System.out.println(Arrays.toString(sig_data));
 
             // 转换时间戳
             mindTooth.setTimeStamp(timestamp_temp);
