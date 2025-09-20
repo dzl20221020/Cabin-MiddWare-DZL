@@ -36,8 +36,6 @@ public class MindToothOperator {
         logger.info("mindtooth处理启动");
     }
 
-
-
     public void EEGData2UnifyData(double[] sig_data) {
         try {
             //                        logger.info("[当前处理线程：]"+Thread.currentThread());

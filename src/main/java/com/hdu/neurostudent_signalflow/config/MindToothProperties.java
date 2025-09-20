@@ -19,4 +19,8 @@ public class MindToothProperties {
     private String impChannels;    //设备的阻抗通道数
     private double impedance_or_data;   //用于表示当前SDK传的数据是阻抗值还是数据,1表示数据，0表示阻抗
 
+    // mindtooth 程序相关配置
+    private String python_path;
+    private String sdk_path;
+    private int max_retry_count;
 }

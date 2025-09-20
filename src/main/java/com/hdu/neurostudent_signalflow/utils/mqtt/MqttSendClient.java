@@ -29,34 +29,34 @@ public class MqttSendClient {
     }
 
     public void connect() {
-        while (true) {
-            try {
-                String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-                mqttClient = new MqttClient(mqttProperties.getHostUrl(), uuid, new MemoryPersistence());
-                MqttConnectOptions options = new MqttConnectOptions();
-                options.setUserName(mqttProperties.getUsername());
-                options.setPassword(mqttProperties.getPassword().toCharArray());
-                options.setConnectionTimeout(mqttProperties.getTimeout());
-                options.setKeepAliveInterval(mqttProperties.getKeepAlive());
-                options.setCleanSession(true);
-                mqttClient.setCallback(mqttSendCallBack);
-                mqttClient.connect(options);
-                logger.info("MqttSendClient 成功连接到服务器");
-
-                // 调用 connectComplete 手动通知回调
-                mqttSendCallBack.connectComplete(connNum > 0, mqttClient.getServerURI());
-                connNum++;
-                break; // 连接成功，跳出循环
-            } catch (MqttException e) {
-                logger.error("MqttSendClient 连接失败，正在重试，错误信息: {}", e.getMessage());
-                try {
-                    Thread.sleep(5000); // 等待5秒后重试
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("重试连接时线程被中断", ex);
-                }
-            }
-        }
+//        while (true) {
+//            try {
+//                String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+//                mqttClient = new MqttClient(mqttProperties.getHostUrl(), uuid, new MemoryPersistence());
+//                MqttConnectOptions options = new MqttConnectOptions();
+//                options.setUserName(mqttProperties.getUsername());
+//                options.setPassword(mqttProperties.getPassword().toCharArray());
+//                options.setConnectionTimeout(mqttProperties.getTimeout());
+//                options.setKeepAliveInterval(mqttProperties.getKeepAlive());
+//                options.setCleanSession(true);
+//                mqttClient.setCallback(mqttSendCallBack);
+//                mqttClient.connect(options);
+//                logger.info("MqttSendClient 成功连接到服务器");
+//
+//                // 调用 connectComplete 手动通知回调
+//                mqttSendCallBack.connectComplete(connNum > 0, mqttClient.getServerURI());
+//                connNum++;
+//                break; // 连接成功，跳出循环
+//            } catch (MqttException e) {
+//                logger.error("MqttSendClient 连接失败，正在重试，错误信息: {}", e.getMessage());
+//                try {
+//                    Thread.sleep(5000); // 等待5秒后重试
+//                } catch (InterruptedException ex) {
+//                    Thread.currentThread().interrupt();
+//                    throw new RuntimeException("重试连接时线程被中断", ex);
+//                }
+//            }
+//        }
     }
 
     public void reconnection() {

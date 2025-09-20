@@ -26,6 +26,9 @@ mindtooth:
   dataChannels: 8
   impChannels: 10
   impedance_or_data: 1
+  max_retry_count: 5
+  python_path: "D:\\Desktop\\code\\Cabin\\Cabin-MiddWare-DZL\\src\\main\\resources\\SDK\\EegAmpApp\\startPython.bat"
+  sdk_path: "D:\\Desktop\\code\\Cabin\\Cabin-MiddWare-DZL\\src\\main\\resources\\SDK\\EegAmpApp\\startEegAmpApp.bat"
 
 # 日志配置
 logging:
