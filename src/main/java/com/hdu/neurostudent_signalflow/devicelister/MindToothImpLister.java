@@ -55,16 +55,16 @@ public class MindToothImpLister implements Runnable{
                 lastTimeStamp = timestamp[0];
                 System.out.println(Arrays.toString(sample));
 
-//                //sample复制到data数组中
-//                System.arraycopy(sample,0,data,0,size);
-//
-//                //data数组中倒数第二个值表示当前的数据是阻抗值还是数据
-//                data[size] = mindToothProperties.getImpedance_id();
-//                //data最后一个值表示当前的时间戳
-//                data[size+1] = System.currentTimeMillis();
-//                //将数据存储到该队列中
-//                recvData.add(data);
-                mindtoothWebSocketClient.send(Arrays.toString(sample));
+                //sample复制到data数组中
+                System.arraycopy(sample,0,data,0,size);
+
+                //data数组中倒数第二个值表示当前的数据是阻抗值还是数据
+                data[size] = mindToothProperties.getImpedance_id();
+                //data最后一个值表示当前的时间戳
+                data[size+1] = System.currentTimeMillis();
+                //将数据存储到该队列中
+                recvData.add(data);
+//                mindtoothWebSocketClient.send(Arrays.toString(sample));
             }
         } catch(Exception ex) {
             logger.error("[2-3]:mindtooth阻抗值监听程序异常...");
