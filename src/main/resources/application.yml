@@ -19,6 +19,7 @@ mqtt:
 
 #MindTooth配置
 mindtooth:
+  enabled: true
   impedance_name: 101409-1002_Impedance
   data_name: 101409-1002_EEG
   impedance_id: 0

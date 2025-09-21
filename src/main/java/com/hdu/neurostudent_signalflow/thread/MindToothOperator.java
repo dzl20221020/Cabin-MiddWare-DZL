@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.hdu.neurostudent_signalflow.config.DataTypeProperties;
 import com.hdu.neurostudent_signalflow.config.MindToothProperties;
 import com.hdu.neurostudent_signalflow.entity.UnifyData;
-import com.hdu.neurostudent_signalflow.service.DataTransmitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +24,12 @@ public class MindToothOperator {
     private BlockingQueue<String> sendQueue;
     private MindToothProperties mindToothProperties;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private DataTransmitService dataTransmitService;
 
     int num = 0;
 
-    public MindToothOperator(BlockingQueue<String> sendQueue,MindToothProperties mindToothProperties,DataTransmitService dataTransmitService) {
+    public MindToothOperator(BlockingQueue<String> sendQueue,MindToothProperties mindToothProperties) {
         this.sendQueue = sendQueue;
         this.mindToothProperties = mindToothProperties;
-        this.dataTransmitService = dataTransmitService;
         logger.info("mindtooth处理启动");
     }
 
@@ -67,7 +64,7 @@ public class MindToothOperator {
             // 转换成JSON格式
             String mintoothJson = JSON.toJSONString(mindTooth);
             // 加入到发送队列中
-            dataTransmitService.DataTran(mintoothJson);
+            sendQueue.put(mintoothJson);
         } catch (Exception e) {
             // 处理线程中断异常
             Thread.currentThread().interrupt();

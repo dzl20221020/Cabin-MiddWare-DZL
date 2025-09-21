@@ -46,8 +46,9 @@ public class MindToothDeviceAdapter extends Device implements DeviceAdapter{
     public void init() {
         this.processThread = mindToothProperties.getProcessThread();
         this.mindtoothOperatorexecutorService = Executors.newFixedThreadPool(processThread);
-        this.mindToothOperator = new MindToothOperator(sendQueue, mindToothProperties, dataTransmitService);
+        this.mindToothOperator = new MindToothOperator(sendQueue, mindToothProperties);
         processThreads = new ProcessThread[processThread];
+        dataTransmitService.start();
     }
 
     @Override

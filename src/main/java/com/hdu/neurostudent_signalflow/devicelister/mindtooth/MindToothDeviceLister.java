@@ -1,6 +1,7 @@
 package com.hdu.neurostudent_signalflow.devicelister.mindtooth;
 
 import com.hdu.neurostudent_signalflow.adapter.MindToothDeviceAdapter;
+import com.hdu.neurostudent_signalflow.config.MindToothProperties;
 import com.hdu.neurostudent_signalflow.devicelister.DeviceLister;
 import com.hdu.neurostudent_signalflow.utils.websocket.MindtoothWebSocketClient;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ public class MindToothDeviceLister extends DeviceLister {
     private static final Logger logger = LoggerFactory.getLogger(MindToothDeviceLister.class);
 
     @Resource
+    private MindToothProperties mindToothProperties;  //mindtooth配置类
+    @Resource
     private MindToothDeviceAdapter mindToothDeviceAdatper;  //mindtooth适配器类
     @Resource
     private MindToothDataLister mindToothDataLister;    //mindtooth数据监听类
@@ -34,6 +37,10 @@ public class MindToothDeviceLister extends DeviceLister {
     @Override
     public void Lister() {
         super.Lister();
+        if (!mindToothProperties.isEnabled()) {
+            logger.info("Mindtooth未启用，监听程序不启动");
+            return ;
+        }
         logger.info("[2]:mindtooth初始化程序启动...");
         //启动适配器
         mindToothDeviceAdatper.addData(recvData);
