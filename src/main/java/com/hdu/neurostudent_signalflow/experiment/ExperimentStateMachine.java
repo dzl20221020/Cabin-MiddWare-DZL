@@ -10,6 +10,7 @@ public class ExperimentStateMachine {
 
     // 状态转换表
     private final Map<ExperimentState, Map<ExperimentEvent, ExperimentState>> transitionTable = new HashMap<>();
+    private final List<StateChangeListener> listeners = new ArrayList<>();
 
     private ExperimentStateMachine() {
         initTransitions();
@@ -70,7 +71,13 @@ public class ExperimentStateMachine {
                 return false; // 无效事件
             }
         } while (!currentState.compareAndSet(prevState, nextState));
-
+        // 通知监听器状态变化
+        for (StateChangeListener listener : listeners) {
+            listener.onStateChange(prevState, nextState);
+            if (nextState == ExperimentState.ERROR) {
+                listener.onError(nextState);
+            }
+        }
         System.out.println("State changed: " + prevState + " → " + nextState);
         return true;
     }
@@ -81,5 +88,32 @@ public class ExperimentStateMachine {
 
     public boolean isTerminalState() {
         return currentState.get() == ExperimentState.ENDED || currentState.get() == ExperimentState.ERROR;
+    }
+
+    public synchronized void addLister(StateChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    public synchronized void removeLister(StateChangeListener listener) {
+        listeners.remove(listener);
+    }
+
+    public boolean reset() {
+        ExperimentState prevState = currentState.get();
+        if (prevState == ExperimentState.ENDED || prevState == ExperimentState.ERROR) {
+            currentState.set(ExperimentState.NOT_STARTED);
+            for (StateChangeListener listener : listeners) {
+                listener.onStateChange(prevState, ExperimentState.NOT_STARTED);
+            }
+            System.out.println("State reset: " + prevState + " → NOT_STARTED");
+            return true;
+        }
+        System.out.println("Reset not allowed from state: " + prevState);
+        return false;
+    }
+
+    public interface StateChangeListener {
+        void onStateChange(ExperimentState oldState, ExperimentState newState);     // 新增状态变化监听方法
+        void onError(ExperimentState errorState);   // 新增错误处理方法
     }
 }
