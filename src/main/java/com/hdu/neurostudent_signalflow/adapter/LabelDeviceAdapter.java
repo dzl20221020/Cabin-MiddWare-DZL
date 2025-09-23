@@ -34,8 +34,7 @@ public class LabelDeviceAdapter extends Device implements DeviceAdapter{
 
             // 数据转发
             dataTransmitService.setSendQueue(sendQuue);
-            Thread thread1 = new Thread(dataTransmitService);
-            thread1.start();
+            dataTransmitService.start();
         }catch (Exception e){
             e.printStackTrace();
             logger.error("label适配器数据转换出现异常...");
