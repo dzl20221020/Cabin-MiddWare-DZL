@@ -8,8 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.BlockingDeque;
 
 /*
@@ -32,6 +40,20 @@ public class MindToothDataLister implements Runnable {
     // 数据和阻抗值监听程序用的是同一个数据接收队列
     public void setRecQueue(BlockingDeque<double[]> recQueue) {
         this.recvData = recQueue;
+    }
+
+    @PostConstruct
+    private void init() {
+        if (!mindToothProperties.isTestEnable()) {
+            // 删除原来的测试文件
+            Path path = Paths.get(mindToothProperties.getTestInputFile());
+            try {
+                Files.deleteIfExists(path);
+                logger.info("mindtooth测试文件删除成功!");
+            } catch (IOException e) {
+                logger.error("mindtooth测试文件删除失败: {}", e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -76,11 +98,35 @@ public class MindToothDataLister implements Runnable {
                 data[size+1] = currTimestamp;
 
 //                mindToothDeviceAdatper.processData(data);
+                // 数据可靠性测试
+                if (mindToothProperties.isTestEnable()) {
+                    writeData2TestFile(data);
+                }
                 recvData.add(data);
             }
 
         } catch(Exception ex) {
             logger.error("mindtooth数据监听程序异常...", ex);
+        }
+    }
+
+    private void writeData2TestFile(double[] data) {
+        Path path = Paths.get(mindToothProperties.getTestInputFile());
+
+        try {
+            Files.createDirectories(path.getParent());
+            if (!Files.exists(path)) {
+                Files.createFile(path);
+                logger.info("mindtooth测试文件创建成功!");
+            }
+        } catch (IOException e) {
+            logger.error("mindtooth测试文件创建失败: {}", e.getMessage());
+        }
+
+        try {
+            Files.writeString(path, Arrays.toString(data) + System.lineSeparator(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            logger.error("mindtooth测试文件写入失败: {}", e.getMessage());
         }
     }
 }

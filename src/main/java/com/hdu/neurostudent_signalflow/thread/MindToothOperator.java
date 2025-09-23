@@ -7,8 +7,13 @@ import com.hdu.neurostudent_signalflow.entity.UnifyData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +32,22 @@ public class MindToothOperator {
 
     int num = 0;
 
+    @PostConstruct
+    private void init() {
+        if (mindToothProperties.isTestEnable()) {
+            // 删除原来的测试文件
+            Path path = Paths.get(mindToothProperties.getTestOutputFile() + Thread.currentThread().getName() + ".txt");
+
+            try {
+                Files.deleteIfExists(path);
+                logger.info("mindtooth测试文件删除成功!");
+            } catch (IOException e) {
+                logger.error("mindtooth测试文件删除失败: {}", e.getMessage());
+            }
+        }
+    }
+
+
     public MindToothOperator(BlockingQueue<String> sendQueue,MindToothProperties mindToothProperties) {
         this.sendQueue = sendQueue;
         this.mindToothProperties = mindToothProperties;
@@ -37,6 +58,9 @@ public class MindToothOperator {
         try {
             logger.info("[当前处理线程：]"+Thread.currentThread());
             logger.info("[当前处理线程：]"+ num++ + "   "+Thread.currentThread()+"处理的数据序号为："+ sig_data[sig_data.length-1]);
+            if (mindToothProperties.isTestEnable()) {
+                writeData2TestFile(sig_data);
+            }
 
             // 处理数据逻辑
             int size = sig_data.length;
@@ -69,6 +93,26 @@ public class MindToothOperator {
             // 处理线程中断异常
             Thread.currentThread().interrupt();
             logger.error("处理线程被中断", e);
+        }
+    }
+
+    private void writeData2TestFile(double[] data) {
+        Path path = Paths.get(mindToothProperties.getTestOutputFile() + Thread.currentThread().getName() + ".txt");
+
+        try {
+            Files.createDirectories(path.getParent());
+            if (!Files.exists(path)) {
+                Files.createFile(path);
+                logger.info("mindtooth测试文件创建成功!");
+            }
+        } catch (IOException e) {
+            logger.error("mindtooth测试文件创建失败: {}", e.getMessage());
+        }
+
+        try {
+            Files.writeString(path, Arrays.toString(data) + System.lineSeparator(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            logger.error("mindtooth测试文件写入失败: {}", e.getMessage());
         }
     }
 

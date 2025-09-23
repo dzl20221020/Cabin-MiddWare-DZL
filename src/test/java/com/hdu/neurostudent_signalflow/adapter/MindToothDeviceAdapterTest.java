@@ -27,7 +27,7 @@ class MindToothDeviceAdapterTest {
         adapter.init();
 
         // 3. 手动注入依赖
-        adapter.mindToothOperator = operator;
+//        adapter.mindToothOperator = operator;
 
         // 4. 初始化队列
         inputQueue = new LinkedBlockingDeque<>();

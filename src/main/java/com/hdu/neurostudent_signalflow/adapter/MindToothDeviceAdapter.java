@@ -71,8 +71,8 @@ public class MindToothDeviceAdapter extends Device implements DeviceAdapter{
                 while (isRunning) {
                     if (data == null) continue;
                     double[] singleData = ((BlockingDeque<double[]>) data).takeFirst();
-                    index = index % processThread;
                     index++;
+                    index = index % processThread;
                     processThreads[index].queue.putLast(singleData);
                 }
             } catch (InterruptedException e) {

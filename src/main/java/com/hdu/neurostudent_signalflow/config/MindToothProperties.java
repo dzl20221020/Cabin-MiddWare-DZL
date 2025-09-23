@@ -28,4 +28,9 @@ public class MindToothProperties {
 
     // 适配器相关配置
     private int processThread;
+
+    // 测试相关配置
+    private boolean testEnable;
+    private String testInputFile;
+    private String testOutputFile;
 }

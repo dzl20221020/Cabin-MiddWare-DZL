@@ -32,6 +32,9 @@ mindtooth:
   max_retry_count: 5
   python_path: "D:\\Desktop\\code\\Cabin\\Cabin-MiddWare-DZL\\src\\main\\resources\\SDK\\EegAmpApp\\startPython.bat"
   sdk_path: "D:\\Desktop\\code\\Cabin\\Cabin-MiddWare-DZL\\src\\main\\resources\\SDK\\EegAmpApp\\startEegAmpApp.bat"
+  testEnable: true
+  testInputFile: "D:\\Desktop\\code\\Cabin\\Cabin-MiddWare-DZL\\src\\main\\resources\\testData\\testInputData.txt"
+  testOutputFile: "D:\\Desktop\\code\\Cabin\\Cabin-MiddWare-DZL\\src\\main\\resources\\testData\\testOutputData"
 
 # 日志配置
 logging:
