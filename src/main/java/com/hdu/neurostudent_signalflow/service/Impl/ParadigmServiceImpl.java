@@ -18,13 +18,14 @@ import java.util.List;
 
 @Service
 public class ParadigmServiceImpl implements ParadigmService {
-    ParadigmTouchScreen paradigmTouchScreenCahce;
+    private final ParadigmTouchScreen paradigmTouchScreenCache;
 
     private static final Logger logger = LoggerFactory.getLogger(ParadigmServiceImpl.class);
 
+    private List<Process> processes = new ArrayList<>();
 
     public ParadigmServiceImpl() {
-        paradigmTouchScreenCahce = new ParadigmTouchScreen();
+        paradigmTouchScreenCache = new ParadigmTouchScreen();
     }
 
     /*
@@ -36,6 +37,13 @@ public class ParadigmServiceImpl implements ParadigmService {
         String projectPath = Paths.get("").toAbsolutePath().toString();
         String uploadDir = projectPath + "/uploads/";
         new File(uploadDir).mkdirs();
+        if (paradigmTouchScreenCache.getCoverPath() != null
+                && !paradigmTouchScreenCache.getCoverPath().isEmpty()
+                && paradigmTouchScreenCache.getFilePath() != null
+                && !paradigmTouchScreenCache.getFilePath().isEmpty()) {
+            logger.info("缓存的范式文件信息已存在,请先存储或清除缓存");
+            return false;
+        }
         try {
             //存储封面文件
             String fileOriginalName = coverFile.getOriginalFilename();
@@ -44,7 +52,7 @@ public class ParadigmServiceImpl implements ParadigmService {
             String filePath = uploadDir + fileUUIDName;
             File file = new File(filePath);
             coverFile.transferTo(file);
-            paradigmTouchScreenCahce.setCoverPath(filePath);
+            paradigmTouchScreenCache.setCoverPath(filePath);
 
             //存储范式文件
             String fileOriginalName2 = paradigmFile.getOriginalFilename();
@@ -52,11 +60,11 @@ public class ParadigmServiceImpl implements ParadigmService {
             String fileUUIDName2 = IdGenerator.generate20CharId() + fileExtension2;
             String filePath2 = uploadDir + fileUUIDName2;
             paradigmFile.transferTo(new File(filePath2));
-            paradigmTouchScreenCahce.setFilePath(filePath2);
-
+            paradigmTouchScreenCache.setFilePath(filePath2);
+            logger.info("文件上传成功,封面文件路径："+filePath+",范式文件路径："+filePath2);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("文件上传失败,原因为："+e.getMessage());
             return false;
         }
     }
@@ -67,16 +75,18 @@ public class ParadigmServiceImpl implements ParadigmService {
     @Override
     public boolean storeFile(ParadigmTouchScreen paradigmTouchScreen) {
         //判断缓存文件是否存在
-        if (paradigmTouchScreen == null)
+        if (paradigmTouchScreen == null) {
+            logger.error("存储范式信息失败,原因:传入的范式信息为空");
             return false;
-        // 判断paradigm是否为空
-        if (paradigmTouchScreenCahce == null)
-            return false;
+        }
 
-        paradigmTouchScreen.setCoverPath(paradigmTouchScreenCahce.getCoverPath());
-        paradigmTouchScreen.setFilePath(paradigmTouchScreenCahce.getFilePath());
+        paradigmTouchScreen.setCoverPath(paradigmTouchScreenCache.getCoverPath());
+        paradigmTouchScreen.setFilePath(paradigmTouchScreenCache.getFilePath());
 
         ConfigManager.addParadigmTouchScreen(paradigmTouchScreen);
+        paradigmTouchScreenCache.setCoverPath("");
+        paradigmTouchScreenCache.setFilePath("");
+        logger.info("存储范式信息成功,范式ID为:"+paradigmTouchScreen.getId());
         return true;
     }
 
@@ -85,7 +95,6 @@ public class ParadigmServiceImpl implements ParadigmService {
         // 遍历配置文件获取所有的范式信息
         try{
             List<ParadigmTouchScreen> paradigmTouchScreens = ConfigManager.getParadigmTouchScreens();
-
             return paradigmTouchScreens;
         }catch (Exception e){
             return null;
@@ -93,8 +102,8 @@ public class ParadigmServiceImpl implements ParadigmService {
     }
 
     /*
-    *   选择本次实验所需的范式
-    * */
+     *   选择本次实验所需的范式
+     * */
 
     @Override
     public boolean selectParadigmById(String id) {
@@ -111,13 +120,15 @@ public class ParadigmServiceImpl implements ParadigmService {
 
 
     /*
-    *   执行本次实验范式
-    * */
+     *   执行本次实验范式
+     * */
     @Override
     public boolean executeParadigm(String experiment_id) {
         // 判断是否已经选择了范式
-        if (ParadigmConfig.PARADIGM == null && experiment_id != null && !experiment_id.trim().isEmpty())
+        if (ParadigmConfig.PARADIGM == null && experiment_id != null && !experiment_id.trim().isEmpty()) {
+            logger.error("执行范式失败,原因:未选择范式");
             return false;
+        }
         ExperimentProperties.EXPERIMENT_ID = experiment_id;
         // 执行范式
         // 获取范式文件
@@ -186,7 +197,6 @@ public class ParadigmServiceImpl implements ParadigmService {
         return true;
     }
 
-    private List<Process> processes = new ArrayList<>();
 
 
     public void startEprimeFile(String fileName){
@@ -221,7 +231,6 @@ public class ParadigmServiceImpl implements ParadigmService {
             // 等待外部应用程序退出
             int exitCode = process.waitFor();
             System.out.println("External application exited with code: " + exitCode);
-
         } catch (IOException | InterruptedException e) {
             logger.error("范式启动失败,原因为："+e.getMessage());
             e.printStackTrace();
@@ -230,8 +239,8 @@ public class ParadigmServiceImpl implements ParadigmService {
 
 
     /*
-    *   根据Id返回范式信息
-    * */
+     *   根据Id返回范式信息
+     * */
     @Override
     public ParadigmTouchScreen getParadigmById(String id) {
         // 遍历配置文件获取所有的范式信息
@@ -243,6 +252,4 @@ public class ParadigmServiceImpl implements ParadigmService {
         }
         return null;
     }
-
-
 }
